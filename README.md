@@ -6,7 +6,7 @@ A native Elixir CouchDb client
 
 Love CouchDB, love Elixir, however no current client for my beloved DB
 yet. This is work in process and currently only implements the most
-basic commands, it will (hopefully) be a full featured CpuchDB client at
+basic commands, it will (hopefully) be a full featured CouchDB client at
 some stage.
 
 It is built on `hackney` and `Poison` and hopefully is fast. Future
