@@ -3,20 +3,26 @@ defmodule Couchex.Client do
   require Logger
   @couch_url "http://localhost:5984/"
 
-  def get(db, id) do
-    path = db <> "/" <> id
-    Logger.debug("Got request for: #{path}")
-    talk(:get, path, nil, nil)
+  def get(db, thing) do
+    get(db, thing, nil)
   end
-  def get(db, id, opts) do
-    path = db <> "/" <> id
+  def get(db, id, opts) when is_binary(id) do
+    path = "#{db}/#{id}"
     Logger.debug("Got request for: #{path} with opts")
     talk(:get, path, nil, opts)
   end
+  def get(db, view, opts) when is_map(view) do
+    path = make_path(db, view)
+    Logger.debug("Got request for: #{path} with opts")
+    {:ok, res} = talk(:get, path, nil, opts)
+    case view[:long] do
+      true -> {:ok, res}
+      _ ->    {:ok, res["rows"]}
+    end
+  end
 
-
-  def put(db, %{ "_id" => id} = doc) do
-    path = db <> "/" <> id
+  def put(db, %{ id: id} = doc) do
+    path = "#{db}/#{id}"
     Logger.debug("Updating doc at: #{path}")
     
     talk(:put, path, doc, nil)
@@ -26,8 +32,8 @@ defmodule Couchex.Client do
     talk(:post, db, doc, nil)
   end
 
-  def del(db, %{ "_id" => id, "_rev" => rev} = doc) do
-    path = db <> "/" <> id
+  def del(db, %{ id: id, rev: rev}) do
+    path = "#{db}/#{id}"
     Logger.debug("Deleting doc: #{path}")
     talk(:delete, path, nil, %{"rev" => rev})
   end
@@ -46,6 +52,19 @@ defmodule Couchex.Client do
         parse_response(res, code)
       error -> error
     end
+  end
+
+  defp make_path(db, %{view: view_path}) do
+    [design, view] = String.split(String.lstrip(view_path, ?/), "/", parts: 2)
+    "#{db}/_design/#{design}/_view/#{view}"
+  end
+  defp make_path(db, %{list: list, view: view_path}) do
+    [design, view] = String.split(String.lstrip(view_path, ?/), "/", parts: 2)
+    "#{db}/_design/#{design}/_list/#{list}/#{view}"
+  end
+  defp make_path(db, %{show: show_path}) do
+    [design, show] = String.split(String.lstrip(show_path, ?/), "/", parts: 2)
+    "#{db}/_design/#{design}/_show/#{show}"
   end
 
   defp get_content(method, path, doc) do

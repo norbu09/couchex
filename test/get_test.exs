@@ -26,8 +26,13 @@ defmodule CouchexGetTest do
       # {:ok,
       # %{"id" => "28c7eceb4088ca72956845284d0010e8", "ok" => true,
       #      "rev" => "1-afad29a7c5b82c61e9aa70ab4fd2e265"}}
-      {:ok, res2} = Couchex.Client.del("test", %{"_id" => res1["id"], "_rev" => res1["rev"]})
-       
+      {:ok, res2} = Couchex.Client.del("test", %{id: res1["id"], rev: res1["rev"]})
+      assert res2["ok"] == true
+      assert res1["id"] == res2["id"]
     end
 
+    test "get view" do
+      {:ok, view} = Couchex.Client.get("test", %{view: "/foo/bar", long: true})
+      assert view["offset"] == 0
+    end
 end
