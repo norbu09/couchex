@@ -1,7 +1,6 @@
 defmodule Couchex.Client do
   
   require Logger
-  @couch_url "http://localhost:5984/"
 
   def get(db, thing) do
     get(db, thing, nil)
@@ -68,7 +67,7 @@ defmodule Couchex.Client do
   end
 
   defp get_content(method, path, doc) do
-    url = @couch_url <> path
+    url = make_url <> path
     headers = [{"Content-Type", "application/json"}]
     Logger.debug("[#{method}] #{url}")
 
@@ -95,5 +94,16 @@ defmodule Couchex.Client do
       {:error, json_err} ->
           {:error, json_err}
     end
+  end
+
+  defp make_url do
+    env = Application.get_all_env(:couchdb)
+    auth = case Keyword.get(env, :user) do
+      nil -> ""
+      user -> "#{user}:#{Keyword.get(env, :pass)}@"
+    end
+    host = Keyword.get(env, :host, "localhost")
+    port = Keyword.get(env, :port, 5984)
+    "http://#{auth}#{host}:#{port}/"
   end
 end
