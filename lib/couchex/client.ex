@@ -42,7 +42,12 @@ defmodule Couchex.Client do
 
     path = case opts do
       nil  -> path_plain
-      opts -> path_plain <> "?" <> URI.encode_query(opts)
+      opts -> 
+        opts1 = case Map.has_key?(opts, "key") do
+          true -> %{opts | "key" => "\"#{opts["key"]}\""}
+          false -> opts
+        end
+        path_plain <> "?" <> URI.encode_query(opts1)
     end
 
     case get_content(method, path, doc) do

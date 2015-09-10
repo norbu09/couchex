@@ -1,6 +1,22 @@
 defmodule CouchexGetTest do
     use ExUnit.Case
 
+# Design doc used for these tests
+# {
+#    "_id": "_design/foo",
+#    "_rev": "6-998e3294a8bab503793e876df6b69376",
+#    "language": "javascript",
+#    "views": {
+#        "bar": {
+#            "map": "function(doc) {\n  if(doc.foo){\n    emit(doc.foo, doc);\n  }\n}"
+#        },
+#        "reduce": {
+#            "map": "function(doc) {\n  if(doc.foo){\n    emit(doc.foo, 1);\n  }\n}",
+#            "reduce": "_sum()"
+#        }
+#    }
+# }
+
     test "add a document" do
       doc = %{"foo" => "bar", "number" => 5, "float" => 3.1415, "array" => ["bla", "blubb"]}
       {:ok, res} = Couchex.Client.put("test", doc)
@@ -32,7 +48,14 @@ defmodule CouchexGetTest do
     end
 
     test "get view" do
-      {:ok, view} = Couchex.Client.get("test", %{view: "/foo/bar", long: true})
+      {:ok, view} = Couchex.Client.get("test", %{view: "foo/bar", long: true})
       assert view["offset"] == 0
+    end
+
+    test "get reduce" do
+      key = "bar"
+      # a reduce retruns a list!
+      {:ok, [view]} = Couchex.Client.get("test", %{view: "foo/reduce"}, %{"group" => true, "key" => "bar"})
+      assert view["key"] == "bar"
     end
 end
