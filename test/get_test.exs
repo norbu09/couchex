@@ -52,6 +52,14 @@ defmodule CouchexGetTest do
       assert view["offset"] == 0
     end
 
+    test "get view as a key based hash" do
+      doc = %{"foo" => "foobar"}
+      {:ok, res} = Couchex.Client.put("test", doc)
+      {:ok, view} = Couchex.Client.get("test", %{view: "foo/bar", key_based: true})
+      assert view["bar"]["foo"] == "bar"
+      assert view["foobar"]["foo"] == "foobar"
+    end
+
     test "get reduce" do
       key = "bar"
       # a reduce retruns a list!

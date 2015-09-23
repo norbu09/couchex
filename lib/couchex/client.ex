@@ -14,8 +14,11 @@ defmodule Couchex.Client do
     path = make_path(db, view)
     Logger.debug("Got request for: #{path} with opts")
     {:ok, res} = talk(:get, path, nil, opts)
-    case view[:long] do
-      true -> {:ok, res}
+    # I am sure there is a more elegant version of this out there
+    view_opts = Map.delete(view, :view)
+    case Map.to_list(view_opts) do
+      [{:long, true}] -> {:ok, res}
+      [{:key_based, true}] -> {:ok, Enum.reduce(res["rows"], %{}, fn(x, acc) -> Map.put(acc, x["key"], x["value"]) end)}
       _ ->    {:ok, res["rows"]}
     end
   end
@@ -43,6 +46,7 @@ defmodule Couchex.Client do
     path = case opts do
       nil  -> path_plain
       opts -> 
+      # FIXME should also respect `startkey` and `endkey`
         opts1 = case Map.has_key?(opts, "key") do
           true -> %{opts | "key" => "\"#{opts["key"]}\""}
           false -> opts
