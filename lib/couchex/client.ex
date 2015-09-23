@@ -18,7 +18,13 @@ defmodule Couchex.Client do
     view_opts = Map.delete(view, :view)
     case Map.to_list(view_opts) do
       [{:long, true}] -> {:ok, res}
-      [{:key_based, true}] -> {:ok, Enum.reduce(res["rows"], %{}, fn(x, acc) -> Map.put(acc, x["key"], x["value"]) end)}
+      [{:key_based, true}] -> 
+        case opts["include_docs"] do
+          nil ->
+            {:ok, Enum.reduce(res["rows"], %{}, fn(x, acc) -> Map.put(acc, x["key"], x["value"]) end)}
+          true ->
+            {:ok, Enum.reduce(res["rows"], %{}, fn(x, acc) -> Map.put(acc, x["key"], x["doc"]) end)}
+        end
       _ ->    {:ok, res["rows"]}
     end
   end
