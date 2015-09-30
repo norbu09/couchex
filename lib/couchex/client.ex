@@ -130,7 +130,7 @@ defmodule Couchex.Client do
   defp env_get(:user) do
       System.get_env("COUCH_USER") || Application.get_env(:couchex, :user) || nil
   end
-  defp env_get(:user) do
+  defp env_get(:pass) do
       System.get_env("COUCH_PASS") || Application.get_env(:couchex, :pass) || nil
   end
 
