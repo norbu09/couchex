@@ -112,13 +112,27 @@ defmodule Couchex.Client do
   end
 
   defp make_url do
-    env = Application.get_all_env(:couchdb)
-    auth = case Keyword.get(env, :user) do
+    auth = case env_get(:user) do
       nil -> ""
-      user -> "#{user}:#{Keyword.get(env, :pass)}@"
+      user -> "#{user}:#{env_get(:pass)}@"
     end
-    host = Keyword.get(env, :host, "localhost")
-    port = Keyword.get(env, :port, 5984)
+    host = env_get(:host)
+    port = env_get(:port)
     "http://#{auth}#{host}:#{port}/"
   end
+
+  defp env_get(:host) do
+      System.get_env("COUCH_PORT_5984_TCP_ADDR") || Application.get_env(:couchex, :host) || "localhost"
+  end
+  defp env_get(:port) do
+      System.get_env("COUCH_PORT_5984_TCP_PORT") || Application.get_env(:couchex, :port) || 5984
+  end
+  defp env_get(:user) do
+      System.get_env("COUCH_USER") || Application.get_env(:couchex, :user) || nil
+  end
+  defp env_get(:user) do
+      System.get_env("COUCH_PASS") || Application.get_env(:couchex, :pass) || nil
+  end
+
+
 end
