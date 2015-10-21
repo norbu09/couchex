@@ -121,17 +121,30 @@ defmodule Couchex.Client do
     "http://#{auth}#{host}:#{port}/"
   end
 
+
   defp env_get(:host) do
-      System.get_env("COUCH_PORT_5984_TCP_ADDR") || Application.get_env(:couchex, :host) || "localhost"
+    env_get(:couchex, :host)
   end
   defp env_get(:port) do
-      System.get_env("COUCH_PORT_5984_TCP_PORT") || Application.get_env(:couchex, :port) || 5984
+    env_get(:couchex, :port)
   end
   defp env_get(:user) do
-      System.get_env("COUCH_USER") || Application.get_env(:couchex, :user) || nil
+    env_get(:couchex, :user)
   end
   defp env_get(:pass) do
-      System.get_env("COUCH_PASS") || Application.get_env(:couchex, :pass) || nil
+    env_get(:couchex, :pass)
+  end
+  defp env_get(config_key, :host) do
+      System.get_env("COUCH_PORT_5984_TCP_ADDR") || Application.get_env(config_key, :host) || "localhost"
+  end
+  defp env_get(config_key, :port) do
+      System.get_env("COUCH_PORT_5984_TCP_PORT") || Application.get_env(config_key, :port) || 5984
+  end
+  defp env_get(config_key, :user) do
+      System.get_env("COUCH_USER") || Application.get_env(config_key, :user) || nil
+  end
+  defp env_get(config_key, :pass) do
+      System.get_env("COUCH_PASS") || Application.get_env(config_key, :pass) || nil
   end
 
 
