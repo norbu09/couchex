@@ -12,6 +12,8 @@ some stage.
 It is built on `hackney` and `Poison` and hopefully is fast. Future
 versions will implement worker pools for additional performance.
 
+This is based on the Perl client [Store-CouchDB](https://github.com/norbu09/Store-CouchDB/).
+
 ## Installation
 
 First, add Couchex to your `mix.exs` dependencies:
