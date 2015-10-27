@@ -17,6 +17,20 @@ defmodule CouchexGetTest do
 #    }
 # }
 
+    setup_all do
+      {:ok, db_list} = Couchex.Client.all_dbs
+
+      if ! Enum.member?(db_list, "test") do
+        raise "required CouchDB databases missing (DBs: #{inspect db_list})"
+      end
+
+      if  Enum.member?(db_list, "test_db_for_db_creation") ||
+          Enum.member?(db_list, "test_db_for_db_deletion") do
+        raise "temp CouchDB databases left after around previous tests (DBs: #{inspect db_list})"
+      end
+      :ok
+    end
+
     test "add a document" do
       doc = %{"foo" => "bar", "number" => 5, "float" => 3.1415, "array" => ["bla", "blubb"]}
       {:ok, res} = Couchex.Client.put("test", doc)
@@ -54,16 +68,33 @@ defmodule CouchexGetTest do
 
     test "get view as a key based hash" do
       doc = %{"foo" => "foobar"}
-      {:ok, res} = Couchex.Client.put("test", doc)
+      {:ok, _res} = Couchex.Client.put("test", doc)
       {:ok, view} = Couchex.Client.get("test", %{view: "foo/bar", key_based: true})
       assert view["bar"]["foo"] == "bar"
       assert view["foobar"]["foo"] == "foobar"
     end
 
     test "get reduce" do
-      key = "bar"
       # a reduce retruns a list!
       {:ok, [view]} = Couchex.Client.get("test", %{view: "foo/reduce"}, %{"group" => true, "key" => "bar"})
       assert view["key"] == "bar"
+    end
+
+    test "list all databases" do
+      {:ok, list} = Couchex.Client.all_dbs
+      assert is_list(list), "#{inspect list} is not a list"
+      assert Enum.member?(list, "_users"), "#{inspect list} should contain \"_users\""
+    end
+
+    test "create a database" do
+      {:ok, res} = Couchex.Client.create_db("test_db_for_db_creation")
+      assert res["ok"] == true
+      {:ok, _res} = Couchex.Client.delete_db("test_db_for_db_creation")
+    end
+
+    test "delete a database" do
+      {:ok, _res} = Couchex.Client.create_db("test_db_for_db_deletion")
+      {:ok, res} = Couchex.Client.delete_db("test_db_for_db_deletion")
+      assert res["ok"] == true
     end
 end
