@@ -66,4 +66,10 @@ defmodule CouchexGetTest do
       {:ok, [view]} = Couchex.Client.get("test", %{view: "foo/reduce"}, %{"group" => true, "key" => "bar"})
       assert view["key"] == "bar"
     end
+
+    test "list all databases" do
+      {:ok, list} = Couchex.Client.all_dbs
+      assert is_list(list), "#{inspect list} is not a list"
+      assert Enum.member?(list, "_users"), "#{inspect list} should contain \"_users\""
+    end
 end

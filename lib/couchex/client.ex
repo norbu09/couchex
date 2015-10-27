@@ -68,6 +68,11 @@ defmodule Couchex.Client do
     end
   end
 
+  def all_dbs do
+    Logger.debug("Got request for list of all DBs")
+    talk(:get, "_all_dbs", nil, nil)
+  end
+
   defp make_path(db, %{view: view_path}) do
     [design, view] = String.split(String.lstrip(view_path, ?/), "/", parts: 2)
     "#{db}/_design/#{design}/_view/#{view}"
