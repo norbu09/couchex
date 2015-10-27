@@ -21,12 +21,12 @@ defmodule CouchexGetTest do
       {:ok, db_list} = Couchex.Client.all_dbs
 
       if ! Enum.member?(db_list, "test") do
-        raise "required CouchDB databases missing"
+        raise "required CouchDB databases missing (DBs: #{inspect db_list})"
       end
 
       if  Enum.member?(db_list, "test_db_for_db_creation") ||
           Enum.member?(db_list, "test_db_for_db_deletion") do
-        raise "temp CouchDB databases left after around previous tests"
+        raise "temp CouchDB databases left after around previous tests (DBs: #{inspect db_list})"
       end
       :ok
     end
