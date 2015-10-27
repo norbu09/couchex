@@ -72,4 +72,16 @@ defmodule CouchexGetTest do
       assert is_list(list), "#{inspect list} is not a list"
       assert Enum.member?(list, "_users"), "#{inspect list} should contain \"_users\""
     end
+
+    test "create a database" do
+      {:ok, res} = Couchex.Client.create_db("test_db_for_db_creation")
+      assert res["ok"] == true
+      {:ok, _res} = Couchex.Client.delete_db("test_db_for_db_creation")
+    end
+
+    test "delete a database" do
+      {:ok, _res} = Couchex.Client.create_db("test_db_for_db_deletion")
+      {:ok, res} = Couchex.Client.delete_db("test_db_for_db_deletion")
+      assert res["ok"] == true
+    end
 end

@@ -73,6 +73,18 @@ defmodule Couchex.Client do
     talk(:get, "_all_dbs", nil, nil)
   end
 
+  def create_db(db) when is_binary(db) do
+    Logger.debug("Got request to create db: #{db}")
+    path = "#{db}"
+    talk(:put, path, nil, nil)
+  end
+
+  def delete_db(db) when is_binary(db) do
+    Logger.debug("Got request to delete db: #{db}")
+    path = "#{db}"
+    talk(:delete, path, nil, nil)
+  end
+
   defp make_path(db, %{view: view_path}) do
     [design, view] = String.split(String.lstrip(view_path, ?/), "/", parts: 2)
     "#{db}/_design/#{design}/_view/#{view}"
