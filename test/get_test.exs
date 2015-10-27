@@ -60,7 +60,7 @@ defmodule CouchexGetTest do
     test "get view as a key based hash" do
       database_checks!
       doc = %{"foo" => "foobar"}
-      {:ok, res} = Couchex.Client.put("test", doc)
+      {:ok, _res} = Couchex.Client.put("test", doc)
       {:ok, view} = Couchex.Client.get("test", %{view: "foo/bar", key_based: true})
       assert view["bar"]["foo"] == "bar"
       assert view["foobar"]["foo"] == "foobar"
@@ -68,7 +68,6 @@ defmodule CouchexGetTest do
 
     test "get reduce" do
       database_checks!
-      key = "bar"
       # a reduce retruns a list!
       {:ok, [view]} = Couchex.Client.get("test", %{view: "foo/reduce"}, %{"group" => true, "key" => "bar"})
       assert view["key"] == "bar"
