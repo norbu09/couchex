@@ -152,16 +152,16 @@ defmodule Couchex.Client do
     env_get(:couchex, :pass)
   end
   defp env_get(config_key, :host) do
-      System.get_env("COUCH_PORT_5984_TCP_ADDR") || Application.get_env(config_key, :host) || "localhost"
+      System.get_env("COUCHDB_HOST") || Application.get_env(config_key, :host) || "localhost"
   end
   defp env_get(config_key, :port) do
-      System.get_env("COUCH_PORT_5984_TCP_PORT") || Application.get_env(config_key, :port) || 5984
+      System.get_env("COUCHDB_PORT") || Application.get_env(config_key, :port) || 5984
   end
   defp env_get(config_key, :user) do
-      System.get_env("COUCH_USER") || Application.get_env(config_key, :user) || nil
+      System.get_env("COUCHDB_USER") || Application.get_env(config_key, :user) || nil
   end
   defp env_get(config_key, :pass) do
-      System.get_env("COUCH_PASS") || Application.get_env(config_key, :pass) || nil
+      System.get_env("COUCHDB_PASS") || Application.get_env(config_key, :pass) || nil
   end
 
 
