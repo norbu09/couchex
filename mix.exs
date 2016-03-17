@@ -24,7 +24,7 @@ defmodule Couchex.Mixfile do
     [
       {:hackney, "~> 1.3"},
       {:honeydew, "~> 0.0.5"},
-      {:poison, "~> 1.5"}
+      {:poison, ">= 1.5.0"}
     ]
   end
 end
