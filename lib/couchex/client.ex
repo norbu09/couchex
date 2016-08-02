@@ -38,10 +38,14 @@ defmodule Couchex.Client do
     end
   end
 
+  def put(db, %{ "_id" => id} = doc) do
+    path = "#{db}/#{id}"
+    Logger.debug("Updating doc at: #{path}")
+    talk(:put, path, doc, nil)
+  end
   def put(db, %{ id: id} = doc) do
     path = "#{db}/#{id}"
     Logger.debug("Updating doc at: #{path}")
-    
     talk(:put, path, doc, nil)
   end
   def put(db, doc) do
@@ -49,6 +53,9 @@ defmodule Couchex.Client do
     talk(:post, db, doc, nil)
   end
 
+  def del(db, %{ "_id" => id, "_rev" => rev}) do
+    del(db, %{id: id, rev: rev})
+  end
   def del(db, %{ id: id, rev: rev}) do
     path = "#{db}/#{id}"
     Logger.debug("Deleting doc: #{path}")
