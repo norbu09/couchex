@@ -2,6 +2,12 @@ defmodule Couchex.Client do
   
   require Logger
 
+  def head(db, thing) do
+    path = "#{db}/#{thing}"
+    Logger.debug("Got HEAD request for: #{path}")
+    talk(:head, path, nil, nil)
+  end
+
   def get(db, thing) do
     get(db, thing, nil)
   end
@@ -62,8 +68,12 @@ defmodule Couchex.Client do
 
     case get_content(method, path, doc) do
       {:ok, code, _headers, body_ref} ->
-        {:ok, res} = :hackney.body body_ref
-        parse_response(res, code)
+        case method do
+          :head -> {:ok, code}
+          _ ->
+            {:ok, res} = :hackney.body body_ref
+            parse_response(res, code)
+        end
       error -> error
     end
   end

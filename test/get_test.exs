@@ -43,6 +43,12 @@ defmodule CouchexGetTest do
       assert id == doc["_id"]
     end
 
+    test "head a document" do
+      id = "bla"
+      {:ok, doc, _} = Couchex.Client.head("test", id)
+      assert id == doc["_id"]
+    end
+
     test "update a document" do
       {:ok, doc} = Couchex.Client.get("test", "bla")
       doc1 = %{doc | "pid" => :erlang.pid_to_list(self())}
