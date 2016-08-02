@@ -4,7 +4,7 @@ defmodule Couchex.Mixfile do
   def project do
     [app: :couchex,
      version: "0.0.7",
-     elixir: ">= 1.0",
+     elixir: ">= 1.0.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
