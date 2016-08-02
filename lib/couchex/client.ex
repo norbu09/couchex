@@ -19,19 +19,22 @@ defmodule Couchex.Client do
   def get(db, view, opts) when is_map(view) do
     path = make_path(db, view)
     Logger.debug("Got request for: #{path} with opts")
-    {:ok, res} = talk(:get, path, nil, opts)
-    # I am sure there is a more elegant version of this out there
-    view_opts = Map.delete(view, :view)
-    case Map.to_list(view_opts) do
-      [{:long, true}] -> {:ok, res}
-      [{:key_based, true}] -> 
-        case opts["include_docs"] do
-          nil ->
-            {:ok, Enum.reduce(res["rows"], %{}, fn(x, acc) -> Map.put(acc, x["key"], x["value"]) end)}
-          true ->
-            {:ok, Enum.reduce(res["rows"], %{}, fn(x, acc) -> Map.put(acc, x["key"], x["doc"]) end)}
+    case talk(:get, path, nil, opts) do
+      {:error, reason} -> {:error, reason}
+      {:ok, res} ->
+        # I am sure there is a more elegant version of this out there
+        view_opts = Map.delete(view, :view)
+        case Map.to_list(view_opts) do
+          [{:long, true}] -> {:ok, res}
+          [{:key_based, true}] -> 
+            case opts["include_docs"] do
+              nil ->
+                {:ok, Enum.reduce(res["rows"], %{}, fn(x, acc) -> Map.put(acc, x["key"], x["value"]) end)}
+              true ->
+                {:ok, Enum.reduce(res["rows"], %{}, fn(x, acc) -> Map.put(acc, x["key"], x["doc"]) end)}
+            end
+          _ ->    {:ok, res["rows"]}
         end
-      _ ->    {:ok, res["rows"]}
     end
   end
 
