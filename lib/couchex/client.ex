@@ -119,7 +119,7 @@ defmodule Couchex.Client do
   end
 
   defp get_content(method, path, doc) do
-    url = make_url <> path
+    url = make_url() <> path
     headers = [{"Content-Type", "application/json"}]
     Logger.debug("[#{method}] #{url}")
 
