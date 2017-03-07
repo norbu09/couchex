@@ -132,7 +132,11 @@ defmodule Couchex.Client do
       error -> error
     end
   end
-  defp parse_response(res, code) do
+  defp parse_response(orig_res, code) do
+    res = orig_res
+          |> String.trim(",")
+          |> String.trim(".")
+          |> String.trim(";")
     case Poison.decode(res) do
       {:ok, json} ->
         cond do
@@ -144,7 +148,7 @@ defmodule Couchex.Client do
             {:error, res}
         end
       {:error, json_err} ->
-          {:error, json_err}
+        {:error, json_err}
     end
   end
 
