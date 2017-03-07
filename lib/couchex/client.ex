@@ -1,5 +1,5 @@
 defmodule Couchex.Client do
-  
+
   require Logger
 
   def head(db, thing) do
@@ -26,7 +26,7 @@ defmodule Couchex.Client do
         view_opts = Map.delete(view, :view)
         case Map.to_list(view_opts) do
           [{:long, true}] -> {:ok, res}
-          [{:key_based, true}] -> 
+          [{:key_based, true}] ->
             case opts["include_docs"] do
               nil ->
                 {:ok, Enum.reduce(res["rows"], %{}, fn(x, acc) -> Map.put(acc, x["key"], x["value"]) end)}
@@ -67,7 +67,7 @@ defmodule Couchex.Client do
 
     path = case opts do
       nil  -> path_plain
-      opts -> 
+      opts ->
       # FIXME should also respect `startkey` and `endkey`
         opts1 = case Map.has_key?(opts, "key") do
           true -> %{opts | "key" => "\"#{opts["key"]}\""}
@@ -105,10 +105,6 @@ defmodule Couchex.Client do
     talk(:delete, path, nil, nil)
   end
 
-  defp make_path(db, %{view: view_path}) do
-    [design, view] = String.split(String.lstrip(view_path, ?/), "/", parts: 2)
-    "#{db}/_design/#{design}/_view/#{view}"
-  end
   defp make_path(db, %{list: list, view: view_path}) do
     [design, view] = String.split(String.lstrip(view_path, ?/), "/", parts: 2)
     "#{db}/_design/#{design}/_list/#{list}/#{view}"
@@ -116,6 +112,10 @@ defmodule Couchex.Client do
   defp make_path(db, %{show: show_path}) do
     [design, show] = String.split(String.lstrip(show_path, ?/), "/", parts: 2)
     "#{db}/_design/#{design}/_show/#{show}"
+  end
+  defp make_path(db, %{view: view_path}) do
+    [design, view] = String.split(String.lstrip(view_path, ?/), "/", parts: 2)
+    "#{db}/_design/#{design}/_view/#{view}"
   end
 
   defp get_content(method, path, doc) do
