@@ -23,7 +23,7 @@ defmodule Couchex.Mixfile do
   defp deps do
     [
       {:hackney, ">= 1.7.1"},
-      {:poison, ">= 3.1.0"}
+      {:poison, ">= 2.0.0"}
     ]
   end
 end
