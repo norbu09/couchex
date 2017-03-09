@@ -3,7 +3,7 @@ defmodule Couchex.Mixfile do
 
   def project do
     [app: :couchex,
-     version: "0.0.8",
+     version: "0.1.0",
      elixir: ">= 1.0.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -22,8 +22,8 @@ defmodule Couchex.Mixfile do
   #
   defp deps do
     [
-      {:hackney, ">= 1.3.0"},
-      {:poison, ">= 1.5.0"}
+      {:hackney, ">= 1.7.1"},
+      {:poison, ">= 3.1.0"}
     ]
   end
 end

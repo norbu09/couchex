@@ -6,6 +6,10 @@ defmodule Couchex do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+    pool_name = :couchex
+    options = [{:timeout, 150000}, {:max_connections, 100}]
+    :ok = :hackney_pool.start_pool(pool_name, options)
+
     children = [
       # Define workers and child supervisors to be supervised
       # worker(Couchex.Worker, [arg1, arg2, arg3])

@@ -63,7 +63,6 @@ defmodule Couchex.Client do
   end
 
   def talk(method, path_plain, doc, opts) do
-    :hackney.start
 
     path = case opts do
       nil  -> path_plain
@@ -126,9 +125,9 @@ defmodule Couchex.Client do
     case Poison.encode(doc) do
       # empty doc
       {:ok, "null"} ->
-        :hackney.request(method, url, headers)
+        :hackney.request(method, url, headers, "", [{:pool, :couchex}])
       {:ok, json} ->
-        :hackney.request(method, url, headers, json)
+        :hackney.request(method, url, headers, json, [{:pool, :couchex}])
       error -> error
     end
   end

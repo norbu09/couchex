@@ -32,7 +32,7 @@ defmodule CouchexGetTest do
     end
 
     test "add a document" do
-      doc = %{"foo" => "bar", "number" => 5, "float" => 3.1415, "array" => ["bla", "blubb"]}
+      doc = %{"_id" => "bla", "foo" => "bar", "number" => 5, "float" => 3.1415, "array" => ["bla", "blubb"]}
       {:ok, res} = Couchex.Client.put("test", doc)
       assert res["ok"] == true
     end
